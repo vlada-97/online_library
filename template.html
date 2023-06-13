@@ -18,9 +18,9 @@
         {% endif %}
         {% for page in range(1, total_pages+1) %}
         {% if page == page_index %}
-        <li class="page-item active"><a class="page-link" href="../pages/index{{page_index}}.html">{{page}}</a></li>
+        <li class="page-item active"><a class="page-link" href="../pages/index{{page}}.html">{{page}}</a></li>
         {% else %}
-        <li class="page-item"><a class="page-link" href="../pages/index{{page_index}}.html">{{page}}</a></li>
+        <li class="page-item"><a class="page-link" href="../pages/index{{page}}.html">{{page}}</a></li>
         {% endif %}
         {% endfor %}
         {% if page_index < total_pages %}
