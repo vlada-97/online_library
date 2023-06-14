@@ -1,64 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> 
-   <title>Library</title>
-   <link rel="icon" type="image/png" href="../lg.png" sizes="16x16">
-</head>
-<body>
-  <div class="container">
-    <nav class="mx-auto" style="width: 200px; margin-top:1rem !important" aria-label="Page navigation example">
-      <ul class="pagination justify-content-center">
-        {%  if page_index > 1 %}
-        <li class="page-item"><a class="page-link" href="../pages/index{{page_index-1}}.html">Previous</a></li>
-        {% else %}
-        <li class="page-item disabled"><a class="page-link" href="../pages/index{{page_index}}.html">Previous</a></li>
-        {% endif %}
-        {% for page in range(1, total_pages+1) %}
-        {% if page == page_index %}
-        <li class="page-item active"><a class="page-link" href="../pages/index{{page}}.html">{{page}}</a></li>
-        {% else %}
-        <li class="page-item"><a class="page-link" href="../pages/index{{page}}.html">{{page}}</a></li>
-        {% endif %}
-        {% endfor %}
-        {% if page_index < total_pages %}
-        <li class="page-item"><a class="page-link" href="../pages/index{{page_index+1}}.html">Next</a></li>
-        {% else %}
-        <li class="page-item disabled"><a class="page-link" href="../pages/index{{page_index}}.html">Next</a></li>
-        {% endif %}
-      </ul>
-    </nav>
-  <div class="row">
-    {% for row in books_content %}
-      {% for book in row %}
-      <div class="col">
-       <div class="card bg-light mb-3" style="max-width: 540px;">
-        <div class="row no-gutters">
-          <div class="col-md-4">
-            <img src="../images/{{book.image| urlencode}}" class="card-img" alt="{{book.book_name}}" >
-          </div>
-          <div class="col-md-8">
-            <div class="card-body">
-              <h5 class="card-title">{{book.book_name}}</h5>
-              <p class="card-text">{{book.author_name}}</p>
-              {% for genre in book.genres.values() %}
-              <h6><span class="badge badge-secondary">{{genre}}</span></h6>
-             {% endfor %}
-              <p class="card-text"><small class="text-muted"><a href="../fantasy_books/{{book.book_name| urlencode}}.txt" target="_blank" rel="noopener noreferrer">Читать</a></small></p>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+        <title>Library</title>
+        <link rel="icon" type="image/png" href="../static/lg.png" sizes="16x16" />
+    </head>
+    <body>
+        <div class="container">
+            <nav class="mx-auto" style="width: 200px; margin-top: 1rem !important;" aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    {% if page_index > 1 %}
+                        <li class="page-item"><a class="page-link" href="../pages/index{{page_index-1}}.html">Предыдущая</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="../pages/index{{page_index}}.html">Предыдущая</a></li>
+                    {% endif %} {% for page in range(1, total_pages+1) %} {% if page == page_index %}
+                        <li class="page-item active"><a class="page-link" href="../pages/index{{page}}.html">{{page}}</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="../pages/index{{page}}.html">{{page}}</a></li>
+                    {% endif %} {% endfor %} {% if page_index < total_pages %}
+                        <li class="page-item"><a class="page-link" href="../pages/index{{page_index+1}}.html">Следующая</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="../pages/index{{page_index}}.html">Следующая</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <div class="row">
+                {% for row in books_content %} {% for book in row %}
+                    <div class="col">
+                        <div class="card bg-light mb-3" style="max-width: 540px;">
+                            <div class="row no-gutters">
+                                <div class="col-md-4">
+                                    <img src="../media/images/{{book.image| urlencode}}" class="card-img" alt="{{book.book_name}}" />
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{book.book_name}}</h5>
+                                        <p class="card-text">{{book.author_name}}</p>
+                                        {% for genre in book.genres.values() %}
+                                            <h6><span class="badge badge-secondary">{{genre}}</span></h6>
+                                        {% endfor %}
+                                    <p class="card-text"><a href="../media/books/{{book.book_name| urlencode}}.txt" target="_blank" rel="noopener noreferrer">Читать</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                    <div class="w-100"></div>
+                {% endfor %}
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-    {% endfor %}
-  <div class="w-100"></div>
-  {% endfor %}
-</div>
-</div>
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-</body>
+        <script src="../static/js/jquery-3.6.4.slim.min"></script>
+        <script src="../static/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>
