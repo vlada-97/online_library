@@ -49,8 +49,8 @@ def get_books_links(start_page, end_page):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--start_id", default=1, type=int, help="First book id.")
-    parser.add_argument("--end_id", default=12, type=int, help="Last book id.")
+    parser.add_argument("--start_page", default=1, type=int, help="First book page.")
+    parser.add_argument("--end_page", default=12, type=int, help="Last book page.")
     parser.add_argument(
         "--dest_folder", default="books", type=str, help="Directory path."
     )
