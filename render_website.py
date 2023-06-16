@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import pathlib
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
@@ -16,16 +17,15 @@ def on_reload():
     template = env.get_template("template.html")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path", default="json",
+    parser.add_argument("--path", default='json/book_content.json',
                         type=str, help="Json file path.")
     args = parser.parse_args()
     path = args.path
-    with open(os.path.join(path, "books_content.json"), "r", encoding="utf-8-sig") as j:
-        books_content = json.load(j)
+    with open(os.path.join(path), "r", encoding="utf-8-sig") as file:
+        books_content = json.load(file)
 
     pages_path = "pages"
     os.makedirs(pages_path, mode=0o777, exist_ok=True)
-
     books_content_on_pages = list(chunked(books_content, books_on_page))
     total_pages = len(books_content_on_pages)
     for index, book_content in enumerate(books_content_on_pages, 1):
