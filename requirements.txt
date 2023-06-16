@@ -1,8 +1,10 @@
+
 beautifulsoup4==4.12.2
-bs4==0.0.1
 idna==3.4
+Jinja2==3.1.2
+livereload==2.6.3
 lxml==4.9.2
+more-itertools==9.1.0
 pathvalidate==3.0.0
 requests==2.31.0
-soupsieve==2.4.1
 urllib3==2.0.3

@@ -13,9 +13,11 @@ from pathvalidate import sanitize_filename
 
 def get_book(url, id):
     params = {"id": id}
-    response = requests.get(url, verify=None, allow_redirects=False, params=params)
+    response = requests.get(
+        url, verify=None, allow_redirects=False, params=params)
     response.raise_for_status()
     check_for_redirect(response)
+
     return response
 
 
@@ -26,25 +28,29 @@ def check_for_redirect(response):
 
 def download_txt(response, book_name, path="books"):
     pathlib.Path("media", path).mkdir(parents=True, exist_ok=True)
-    if not response.content:
-        raise InvalidBookType(response)
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
     response.raise_for_status()
     check_for_redirect(response)
-
-    filepath = os.path.join("media", path, f"{sanitize_filename(book_name)}.txt")
-    with open(filepath, "w", encoding="utf-8") as file:
-        file.write(response.text)
-    return f"Книга: {filepath}"
+    if response.content:
+        filepath = os.path.join(
+            "media", path, f"{sanitize_filename(book_name)}.txt")
+        with open(filepath, "w", encoding="utf-8") as file:
+            file.write(response.text)
+        return f"Книга: {filepath}"
 
 
 def parse_book_page(response):
     soup = BeautifulSoup(response.text, "lxml")
+    try:
+        soup.select_one(
+            '.d_book a[title*="скачать книгу txt"]')['href']
+    except TypeError:
+        raise InvalidBookType(response)
 
     title_tag = soup.select_one("body div[id=content] h1")
     if title_tag:
         book_name, book_author = title_tag.text.split("::")
-        title = book_name.strip().rstrip()
+        title = book_name.strip().rstrip().replace(':', '')
         author = book_author.strip().rstrip()
     image = soup.select_one(".bookimage img")["src"].rstrip()
     img_short = soup.select_one(".bookimage img")["src"].split("/")[2].rstrip()
@@ -84,7 +90,8 @@ def save_json(book_components, path="json"):
 
 def download_image(book_id, book_image, path="images"):
     pathlib.Path("media", path).mkdir(parents=True, exist_ok=True)
-    image_url = urllib.parse.urljoin(f"https://tululu.org/b{book_id}/", book_image)
+    image_url = urllib.parse.urljoin(
+        f"https://tululu.org/b{book_id}/", book_image)
     resource = requests.get(image_url)
     resource.raise_for_status()
 
@@ -103,7 +110,8 @@ class InvalidBookType(Exception):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--start_id", default=1, type=int, help="First book id.")
+    parser.add_argument("--start_id", default=1,
+                        type=int, help="First book id.")
     parser.add_argument("--end_id", default=12, type=int, help="Last book id.")
     parser.add_argument(
         "--dest_folder", default="books", type=str, help="Directory path."
@@ -111,7 +119,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--skip_imgs", action="store_true", help="Don't download images."
     )
-    parser.add_argument("--skip_txt", action="store_true", help="Don't download texts.")
+    parser.add_argument("--skip_txt", action="store_true",
+                        help="Don't download texts.")
     parser.add_argument(
         "--json_path", default="json", type=str, help="Directory json file path."
     )
@@ -127,6 +136,7 @@ if __name__ == "__main__":
             response = get_book(f"https://tululu.org/b{book_id}/", book_id)
             if not response.content:
                 raise InvalidBookType(response)
+
             book_content, book_image = parse_book_page(response)
             books_content.append(book_content)
             book_name = book_content["book_name"]
@@ -149,4 +159,3 @@ if __name__ == "__main__":
             print(ex)
             continue
     save_json(books_content, json_path)
-

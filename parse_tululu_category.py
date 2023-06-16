@@ -21,20 +21,20 @@ def get_books_links(start_page, end_page):
     for page in range(start_page, end_page):
         try:
             response = get_book(f"https://tululu.org/l55/{page}", page)
-            if not response.content or response.text is None:
-                print(response.content, response.text)
-                raise InvalidBookType(response)
-            else:
+            response.raise_for_status()
+            check_for_redirect(response)
+            soup = BeautifulSoup(response.text, "lxml")
+            book_numbers = soup.select("body .d_book")
+            for book_num in book_numbers:
+                book_url = urllib.parse.urljoin(
+                    f"https://tululu.org/l55/{book_num}",
+                    book_num.select_one("a")["href"],
+                )
+                response = requests.get(book_url)
                 response.raise_for_status()
                 check_for_redirect(response)
-                soup = BeautifulSoup(response.text, "lxml")
-                book_numbers = soup.select("body .d_book")
-                for book_num in book_numbers:
-                    book_url = urllib.parse.urljoin(
-                        f"https://tululu.org/l55/{book_num}",
-                        book_num.select_one("a")["href"],
-                    )
-                    book_links.append(book_url)
+
+                book_links.append(book_url)
         except (
             requests.exceptions.HTTPError,
             requests.exceptions.ConnectionError,
@@ -49,15 +49,18 @@ def get_books_links(start_page, end_page):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--start_page", default=1, type=int, help="First book page.")
-    parser.add_argument("--end_page", default=12, type=int, help="Last book page.")
+    parser.add_argument("--start_page", default=1,
+                        type=int, help="First book page.")
+    parser.add_argument("--end_page", default=12,
+                        type=int, help="Last book page.")
     parser.add_argument(
         "--dest_folder", default="books", type=str, help="Directory path."
     )
     parser.add_argument(
         "--skip_imgs", action="store_true", help="Don't download images."
     )
-    parser.add_argument("--skip_txt", action="store_true", help="Don't download texts.")
+    parser.add_argument("--skip_txt", action="store_true",
+                        help="Don't download texts.")
     parser.add_argument(
         "--json_path", default="json", type=str, help="Directory json file path."
     )
@@ -81,7 +84,8 @@ if __name__ == "__main__":
             books_content.append(book_content)
             book_name = book_content["book_name"]
             book_page_num = (
-                urllib.parse.urlparse(book_url).path.split("/")[1].split("b")[1]
+                urllib.parse.urlparse(book_url).path.split(
+                    "/")[1].split("b")[1]
             )
 
             if not args.skip_imgs:
